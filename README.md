@@ -27,3 +27,7 @@ cmp.setup({
     }
 })
 ```
+
+
+TODO:
+Merge with: https://github.com/rasulomaroff/cmp-bufname/issues/1
