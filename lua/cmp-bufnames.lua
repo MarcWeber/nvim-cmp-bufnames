@@ -4,8 +4,6 @@ function M:is_available()
 end
 
 function M:get_keyword_pattern (params)
-  -- return [[\k\+]]
-  -- return [[/]]
   local min_match_length = params.option.min_match_length or 3
   -- local min_match_length = 3
   -- params.option = vim.tbl_deep_extend('keep', params.option, defaults)
@@ -18,6 +16,7 @@ end
 
 function M:complete(params, callback)
   local bufs = vim.api.nvim_list_bufs()
+  print(vim.inspect(bufs))
 
   -- if length changed a new file is there
   -- maybe this caching needs improvement
@@ -34,13 +33,14 @@ function M:complete(params, callback)
     end
 
     for i, name in ipairs(M.bufnames) do
-      if not name == ""  then
+      if not (name == "") then
         add(i, vim.fs.basename(name) )
         add(i, name)
       end
     end
 
     M.completions = completions
+
   end
 
   callback(M.completions)
