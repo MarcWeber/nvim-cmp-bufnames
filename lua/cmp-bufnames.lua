@@ -27,18 +27,22 @@ function M:complete(params, callback)
     for i, h in ipairs(bufs) do
       M.bufnames[i] = vim.api.nvim_buf_get_name(h)
     end
+
+    local completions = {}
+    local function add(i, name)
+      table.insert(completions, { textEditText = name,  cmp = { kind_text ="cmp-bufnames " .. i}, label = name})
+    end
+
+    for i, name in ipairs(M.bufnames) do
+      if not name == ""  then
+        add(i, vim.fs.basename(name) )
+        add(i, name)
+      end
+    end
+
+    M.completions = completions
   end
 
-  local completions = {}
-  local function add(i, name)
-    table.insert(completions, { textEditText = name,  cmp = { kind_text ="cmp-bufnames " .. i}, label = name})
-  end
-
-  for i, name in ipairs(M.bufnames) do
-    add(i, vim.fs.basename(name) )
-    add(i, name)
-  end
-
-  callback(completions)
+  callback(M.completions)
 end
 return M
