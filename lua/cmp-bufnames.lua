@@ -1,4 +1,5 @@
 local M = {}
+
 function M:is_available()
   return true
 end
@@ -16,7 +17,6 @@ end
 
 function M:complete(params, callback)
   local bufs = vim.api.nvim_list_bufs()
-  print(vim.inspect(bufs))
 
   -- if length changed a new file is there
   -- maybe this caching needs improvement
@@ -38,9 +38,7 @@ function M:complete(params, callback)
         add(i, name)
       end
     end
-
     M.completions = completions
-
   end
 
   callback(M.completions)
