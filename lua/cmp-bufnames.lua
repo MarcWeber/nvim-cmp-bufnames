@@ -5,6 +5,7 @@ function M:is_available()
 end
 
 function M:get_keyword_pattern (params)
+  -- copied from fuzzy cmp filename matching, overkill ? It works
   local min_match_length = params.option.min_match_length or 3
   -- local min_match_length = 3
   -- params.option = vim.tbl_deep_extend('keep', params.option, defaults)
@@ -16,7 +17,8 @@ function M:get_keyword_pattern (params)
 end
 
 function M:complete(params, callback)
-  local bufs = vim.api.nvim_list_bufs()
+
+  local bufs = (params.option.bufs or vim.api.nvim_list_bufs)()
 
   -- if length changed a new file is there
   -- maybe this caching needs improvement
@@ -28,14 +30,18 @@ function M:complete(params, callback)
     end
 
     local completions = {}
-    local function add(i, name)
-      table.insert(completions, { textEditText = name,  cmp = { kind_text ="cmp-bufnames " .. i}, label = name})
+
+    local add_function = params.option.add or function(M, completions, i,  name)
+      local function add(name)
+        table.insert(completions, { textEditText = name,  cmp = { kind_text = "cmp-bufnames " .. i}, label = name})
+      end
+      add(name)
+      add(vim.fs.basename(name))
     end
 
     for i, name in ipairs(M.bufnames) do
       if not (name == "") then
-        add(i, vim.fs.basename(name) )
-        add(i, name)
+        add_function(M, completions, i, name)
       end
     end
     M.completions = completions
